@@ -50,5 +50,15 @@ object KNNClassifier {
         // Finding the plurality of the ground truth values for a tuple
         val pluralities = nearest_neighbors.map({case (k, v) => (k, v.groupBy(x => x).mapValues(_.size).maxBy(_._2)._1)})
         pluralities.collect().foreach(println)
+
+        // pluralities output:
+        // (7, 0)
+        // (54, 1)
+        // (12, 1)
+        // ...
+        // (18782, 0)
+
+        // Compare ground truth and pluralities output
+
     }
 }
