@@ -28,7 +28,7 @@ object KNNClassifier {
         val num_neighbors = 1
         val trainLines = trainFile.map(x => x.split(",")).map(x => x.map(y => y.toDouble)).map(
             x => List(x(0).toInt, x(1), x(2), x(3), x(4), x(5), x(6), x(7), x(8), x(9), x(10), x(11), x(12).toInt))
-        val groundTruth = trainFile.map(x => x.split(",")).map(x => List(x(0).toInt, x(12).toInt))
+        val groundTruth = trainFile.map(x => x.split(",")).map(x => (x(0).toDouble, x(12).toDouble))
 //        trainLines.foreach(println)
 //        groundTruth.foreach(println)
         // Generating matrix of all tuples
@@ -43,11 +43,12 @@ object KNNClassifier {
             .map({case (k, v) => (k, v.toList.sortBy(x => x._2)(Ordering[Double].reverse).take(num_neighbors))})
             .mapValues(v => v.map(x => x._1))
 
-        nearest_neighbors.collect().foreach(println)
+//        nearest_neighbors.collect().foreach(println)
 
         // Finding the plurality of the ground truth values for a tuple
         val pluralities = nearest_neighbors.map({case (k, v) => (k, v.groupBy(x => x).mapValues(_.size).maxBy(_._2)._1)})
-        pluralities.collect().foreach(println)
+
+//        pluralities.collect().foreach(println)
 
         // pluralities output:
         // (7, 0)
@@ -56,7 +57,9 @@ object KNNClassifier {
         // ...
         // (18782, 0)
 
-        // Compare ground truth and pluralities output
+        val merged = groundTruth.join(pluralities)
+        val accuracy = merged.filter(x => x._2._1 == x._2._2).count().toDouble / merged.count().toDouble
 
+//        println(accuracy)
     }
 }
