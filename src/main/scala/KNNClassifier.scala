@@ -26,19 +26,17 @@ object KNNClassifier {
 
         val trainFile = sc.textFile("src/main/scala/train/part-00000")
         val num_neighbors = 1
-
-        val trainLines = trainFile.map(x => x.split(",")).map(x => List(x(0).toInt, x(1).toDouble, x(2).toDouble, x(3).toDouble,
-            x(4).toDouble, x(5).toDouble, x(6).toDouble, x(7).toDouble, x(8).toDouble, x(9).toDouble, x(10).toDouble, x(11).toDouble))
-        val groundTruth = trainFile.map(x => x.split(",")).map(x => (x(0).toInt, (x(11).toDouble)))
-        trainLines.foreach(println)
-        groundTruth.foreach(println)
-
+        val trainLines = trainFile.map(x => x.split(",")).map(x => x.map(y => y.toDouble)).map(
+            x => List(x(0).toInt, x(1), x(2), x(3), x(4), x(5), x(6), x(7), x(8), x(9), x(10), x(11), x(12).toInt))
+        val groundTruth = trainFile.map(x => x.split(",")).map(x => List(x(0).toInt, x(12).toInt))
+//        trainLines.foreach(println)
+//        groundTruth.foreach(println)
         // Generating matrix of all tuples
         val allLines = trainLines.cartesian(trainLines).filter({case (tup1, tup2) => tup1(0) != tup2(0)})
         println("All Lines generated")
 
         // Calculating euclidean distances from the matrix
-        val distances = allLines.map({case (x, y) => (x(0), (y(11), euclidean_distance(x.init, y.init)))})
+        val distances = allLines.map({case (x, y) => (x(0), (y(12), euclidean_distance(x.slice(1,12), y.slice(1,12))))})
 
         // Finding k nearest neighbors for a tuple and returning their ground truth values
         val nearest_neighbors = distances.groupByKey()
