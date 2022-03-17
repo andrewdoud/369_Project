@@ -36,7 +36,7 @@ object DataPreprocess {
             x._6/col6Max, x._7/col7Max, x._8/col8Max, x._9/col9Max, x._10/col10Max, x._11/col11Max, x._12/col12Max, x._13))
         linesScaled.foreach(println)
 
-        val trainTest = linesEncoded.randomSplit(Array(0.8, 0.2)) // 80/20 train test split
+        val trainTest = linesScaled.randomSplit(Array(0.8, 0.2)) // 80/20 train test split
         val train = trainTest(0).map(x => x.toString().slice(1, x.toString().length-1))
         val test = trainTest(1).map(x => x.toString().slice(1, x.toString().length-1))
         train.coalesce(1).saveAsTextFile("src/main/scala/train")
